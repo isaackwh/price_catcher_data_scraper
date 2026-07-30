@@ -40,6 +40,16 @@ def main():
     df['item_code'] = df['item_code'].astype(int)
     df['premise_code'] = df['premise_code'].astype(int)
 
+    # --- FILTER OUT UNKNOWN CODES ON THE FLY ---
+    print("Verifying structural data against Supabase lookups...")
+    valid_items = [row['item_code'] for row in supabase.table("item_lookup").select("item_code").execute().data]
+    valid_premises = [row['premise_code'] for row in supabase.table("premise_lookup").select("premise_code").execute().data]
+
+    # 2. Keep only the rows that match your actual lookup entries
+    initial_count = len(df)
+    df = df[df['item_code'].isin(valid_items) & df['premise_code'].isin(valid_premises)]
+    print(f"Filtered out {initial_count - len(df)} orphan records with missing item/premise lookup data.")
+
     # Convert dataframe to dictionary list
     raw_records = df.to_dict(orient="records")
     records = [{k: (None if pd.isna(v) else v) for k, v in m.items()} for m in raw_records]
