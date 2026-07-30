@@ -24,9 +24,14 @@ jobs:
         python -m pip install --upgrade pip
         pip install pandas pyarrow supabase
 
-    - name: Run Sync Script
+    - name: Run Lookups Sync Script
       env:
-        # Securely pass your Supabase credentials into the running script environment
+        SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+        SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+      run: python sync_lookups.py
+
+    - name: Run Main Price Sync Script
+      env:
         SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
         SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
       run: python sync_data.py
