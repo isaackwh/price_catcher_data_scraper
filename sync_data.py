@@ -34,6 +34,7 @@ def main():
         latest_day = df['date'].max()
         print(f"Filtering dataset to only keep rows from the latest date: {latest_day}")
         df = df[df['date'] == latest_day]
+        df['date'] = df['date'].astype(str)
 
     # Convert dataframe to dictionary list
     records = df.to_dict(orient="records")
