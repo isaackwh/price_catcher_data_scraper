@@ -1,0 +1,32 @@
+name: Daily OpenDOSM Data Sync
+
+on:
+  schedule:
+    # Runs at 00:00 UTC (8:00 AM Malaysian Time) every single day
+    - cron: '0 0 * * *'
+  workflow_dispatch: # Allows you to trigger it manually via the GitHub website to test it
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-node-version: '3.11'
+
+    - name: Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pandas pyarrow supabase
+
+    - name: Run Sync Script
+      env:
+        # Securely pass your Supabase credentials into the running script environment
+        SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+        SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+      run: python sync_data.py
