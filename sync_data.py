@@ -31,10 +31,8 @@ def main():
     # To stay under Supabase's 500 MB Free Tier, filter it to just your target items or location.
     # Example: Keeping only items tracked on the most recent available day
     if 'date' in df.columns:
-        latest_day = df['date'].max()
-        print(f"Filtering dataset to only keep rows from the latest date: {latest_day}")
-        df = df[df['date'] == latest_day]
         df['date'] = df['date'].astype(str)
+        print(f"Processing entire file. Total rows: {len(df)}")
 
     df = df.dropna(subset=['item_code', 'premise_code'])
     df['item_code'] = df['item_code'].astype(int)
@@ -53,18 +51,23 @@ def main():
     # Convert dataframe to dictionary list
     raw_records = df.to_dict(orient="records")
     records = [{k: (None if pd.isna(v) else v) for k, v in m.items()} for m in raw_records]
-    print(f"Processed {len(records)} records. Uploading...")
+    print(f"Processed {len(records)} verified records. Uploading in batches...")
 
     # 4. Upsert to Supabase
     # For PriceCatcher, conflict unique key is usually a combination of date + item_code + premises_code
-    try:
-        supabase.table("pricecatcher").upsert(
-            records, 
-            on_conflict="date,item_code,premise_code"
-        ).execute()
-        print("PriceCatcher data successfully synced!")
-    except Exception as e:
-        print(f"Error uploading to Supabase: {e}")
+    chunk_size = 4000
+    for i in range(0, len(records), chunk_size):
+        chunk = records[i:i + chunk_size]
+        try:
+            supabase.table("pricecatcher").upsert(
+                chunk, 
+                on_conflict="item_code,premise_code"  # 🟢 CHANGE: Removed 'date' to collapse history
+            ).execute()
+            print(f"Uploaded batch {i} to {i + len(chunk)}")
+        except Exception as e:
+            print(f"Error uploading batch starting at index {i}: {e}")
+            
+    print("PriceCatcher snapshot sync completed successfully!")
 
 if __name__ == "__main__":
     main()
