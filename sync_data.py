@@ -36,6 +36,10 @@ def main():
         df = df[df['date'] == latest_day]
         df['date'] = df['date'].astype(str)
 
+    df = df.dropna(subset=['item_code', 'premise_code'])
+    df['item_code'] = df['item_code'].astype(int)
+    df['premise_code'] = df['premise_code'].astype(int)
+
     # Convert dataframe to dictionary list
     raw_records = df.to_dict(orient="records")
     records = [{k: (None if pd.isna(v) else v) for k, v in m.items()} for m in raw_records]
