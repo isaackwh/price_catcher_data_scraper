@@ -44,7 +44,7 @@ def main():
     try:
         supabase.table("pricecatcher").upsert(
             records, 
-            on_conflict="date,item_code,premises_code"  # Match your composite unique keys
+            on_conflict="date,item_code,premise_code"
         ).execute()
         print("PriceCatcher data successfully synced!")
     except Exception as e:
