@@ -10,6 +10,13 @@ def sync_items():
     url = "https://storage.data.gov.my/pricecatcher/lookup_item.parquet"
     print("Downloading item lookups...")
     df = pd.read_parquet(url)
+    df = df.rename(columns={
+        'item_code': 'item_code',
+        'item': 'item_name',
+        'unit': 'unit',
+        'item_group': 'item_group',
+        'item_category': 'item_category'
+    })
     df = df.where(pd.notnull(df), None)
     records = df.to_dict(orient="records")
     print(f"Upserting {len(records)} items...")
@@ -19,6 +26,14 @@ def sync_premises():
     url = "https://storage.data.gov.my/pricecatcher/lookup_premise.parquet"
     print("Downloading premise lookups...")
     df = pd.read_parquet(url)
+    df = df.rename(columns={
+        'premise_code': 'premise_code',
+        'premise': 'premise_name',
+        'address': 'address',
+        'premise_type': 'premise_type',
+        'state': 'state',
+        'district': 'district'
+    })
     df = df.where(pd.notnull(df), None)
     records = df.to_dict(orient="records")
     print(f"Upserting {len(records)} premises...")
