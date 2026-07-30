@@ -17,7 +17,7 @@ def sync_items():
         'item_group': 'item_group',
         'item_category': 'item_category'
     })
-    df = df.where(pd.notnull(df), None)
+    df = df.dropna(subset=['item_name'])
     raw_records = df.to_dict(orient="records")
     records = [{k: (None if pd.isna(v) else v) for k, v in m.items()} for m in raw_records]
     print(f"Upserting {len(records)} items...")
@@ -35,7 +35,7 @@ def sync_premises():
         'state': 'state',
         'district': 'district'
     })
-    df = df.where(pd.notnull(df), None)
+    df = df.dropna(subset=['premise_name'])
     raw_records = df.to_dict(orient="records")
     records = [{k: (None if pd.isna(v) else v) for k, v in m.items()} for m in raw_records]
     print(f"Upserting {len(records)} premises...")
