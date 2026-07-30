@@ -15,7 +15,7 @@ def main():
     current_date_str = datetime.datetime.now().strftime("%Y-%m")
     
     # 2. Inject the dynamic string into the OpenDOSM PriceCatcher URL template
-    url = f"https://storage.data.gov.my/pricecatcher/pricecatcher_{current_date_str).parquet"
+    url = f"https://storage.data.gov.my/pricecatcher/pricecatcher_{current_date_str}.parquet"
     
     print(f"Target URL generated: {url}")
     
