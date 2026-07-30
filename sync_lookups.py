@@ -10,6 +10,7 @@ def sync_items():
     url = "https://storage.data.gov.my/pricecatcher/lookup_item.parquet"
     print("Downloading item lookups...")
     df = pd.read_parquet(url)
+    df = df.where(pd.notnull(df), None)
     records = df.to_dict(orient="records")
     print(f"Upserting {len(records)} items...")
     supabase.table("item_lookup").upsert(records, on_conflict="item_code").execute()
@@ -18,6 +19,7 @@ def sync_premises():
     url = "https://storage.data.gov.my/pricecatcher/lookup_premise.parquet"
     print("Downloading premise lookups...")
     df = pd.read_parquet(url)
+    df = df.where(pd.notnull(df), None)
     records = df.to_dict(orient="records")
     print(f"Upserting {len(records)} premises...")
     supabase.table("premise_lookup").upsert(records, on_conflict="premise_code").execute()
