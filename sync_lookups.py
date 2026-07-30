@@ -7,7 +7,7 @@ SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 def sync_items():
-    url = "https://data.gov.my"
+    url = "https://storage.data.gov.my/pricecatcher/lookup_item.parquet"
     print("Downloading item lookups...")
     df = pd.read_parquet(url)
     records = df.to_dict(orient="records")
@@ -15,7 +15,7 @@ def sync_items():
     supabase.table("item_lookup").upsert(records, on_conflict="item_code").execute()
 
 def sync_premises():
-    url = "https://data.gov.my"
+    url = "https://storage.data.gov.my/pricecatcher/lookup_premise.parquet"
     print("Downloading premise lookups...")
     df = pd.read_parquet(url)
     records = df.to_dict(orient="records")
