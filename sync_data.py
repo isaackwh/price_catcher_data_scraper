@@ -37,7 +37,8 @@ def main():
         df['date'] = df['date'].astype(str)
 
     # Convert dataframe to dictionary list
-    records = df.to_dict(orient="records")
+    raw_records = df.to_dict(orient="records")
+    records = [{k: (None if pd.isna(v) else v) for k, v in m.items()} for m in raw_records]
     print(f"Processed {len(records)} records. Uploading...")
 
     # 4. Upsert to Supabase
