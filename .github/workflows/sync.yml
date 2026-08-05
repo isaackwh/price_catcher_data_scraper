@@ -2,8 +2,8 @@ name: Daily OpenDOSM Data Sync
 
 on:
   schedule:
-    # Runs at 00:00 UTC (8:00 AM Malaysian Time) every single day
-    - cron: '0 0 * * *'
+    # Runs at 00:00 UTC (12:05 PM Malaysian Time) every single day
+    - cron: '5 4 * * *'
   workflow_dispatch: # Allows you to trigger it manually via the GitHub website to test it
 
 jobs:
